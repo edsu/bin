@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+import shutil
+
+from pathlib import Path
+
+if len(sys.argv) != 3:
+    sys.exit("usage: filedoc <author_surname> <doc>")
+
+author_surname = sys.argv[1].capitalize()
+doc_path = Path(sys.argv[2])
+
+if not doc_path.is_file():
+    sys.exit(f"doc does not exist: {doc_path}")
+
+papers_dir = Path.home() / 'Dropbox/Papers'
+author_dir = Path(papers_dir / author_surname)
+
+if not author_dir.is_dir():
+    author_dir.mkdir()
+
+new_doc_path = author_dir / doc_path.name
+shutil.copyfile(doc_path, new_doc_path)
+
+print('added {} to {}'.format(doc_path.name, author_dir))

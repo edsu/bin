@@ -1,0 +1,18 @@
+#!/usr/bin/env python3
+
+import sys
+import json
+import argparse
+
+parser = argparse.ArgumentParser('Work with HAR files')
+parser.add_argument('har_files', nargs='+')
+parser.add_argument('--missing', action='store_true')
+args = parser.parse_args()
+
+har = json.load(open(args.har_files[0]))
+
+for entry in har['log']['entries']:
+    if args.missing and entry['response']['status'] == 404:
+        print(entry['request']['url'])
+    else:
+        print(entry['request']['url'])

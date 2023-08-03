@@ -1,0 +1,3 @@
+echo "| Foo | Count |"
+echo "|:---|---:|"
+perl -lne 's/^(\s*)(\d*)(\s*)(.*)/| $4 | $2 |/g; print $_'
