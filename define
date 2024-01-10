@@ -1,0 +1,8 @@
+#!/bin/bash
+
+def="$(curl -s dict://dict.org/define:$1: | grep -v '^\d\d\d ')";
+if [ "$def" = "" ]; then
+    echo no definition;
+else
+    echo "$def" | mdcat -p;
+fi
