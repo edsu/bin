@@ -2,7 +2,7 @@
 
 import pathlib
 
-p = pathlib.Path('/Users/edsummers/Projects/sul-dlss/puppet/hieradata/node/')
+p = pathlib.Path('/Users/edsu/Projects/sul-dlss/puppet/hieradata/node/')
 
 for node_dir in p.iterdir():
     print(node_dir.name.replace('.eyaml', ''))

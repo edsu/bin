@@ -1,0 +1,56 @@
+#!/usr/bin/env python3
+
+"""
+Look up a URL in swap.stanford.edu and print out the collections and crawl
+SDR object identifiers that contain a snapshot of the URL.
+"""
+
+import sys
+import json
+import collections
+
+from urllib.request import urlopen
+
+
+def main(url):
+    # get a dictionary where the key is the collection druid and the value is a
+    # list of crawl druids
+    snapshots = collections.defaultdict(set)
+    for result in get_results(url):
+        coll_druid, item_druid = parse_filename(result["filename"])
+        snapshots[coll_druid].add(item_druid)
+
+    # output the results!
+    for coll_druid in snapshots.keys():
+        meta = get_metadata(coll_druid)
+        print()
+        print(
+            f"{meta['description']['title'][0]['value']} https://argo.stanford.edu/view/druid:{coll_druid}"
+        )
+        for item_druid in snapshots[coll_druid]:
+            print(f"* {item_druid} https://argo.stanford.edu/view/druid:{item_druid}")
+
+
+def get_results(url):
+    # TODO: handle paging?
+    cdx_url = f"https://swap.stanford.edu/was/cdx?output=json&url={url}"
+    return [json.loads(line) for line in urlopen(cdx_url)]
+
+
+def get_metadata(druid):
+    # assumes that the collection is public
+    return json.load(urlopen(f"https://purl.stanford.edu/{druid}.json"))
+
+
+def parse_filename(path):
+    # use the file system layout for WARC files to determine the collection and item DRUIDs
+    parts = path.split("/")
+    coll_druid = parts[0]
+    item_druid = "".join(parts[1:5])
+    return coll_druid, item_druid
+
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        sys.exit("usage: swap <url>")
+    main(sys.argv[1])
