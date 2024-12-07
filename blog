@@ -1,0 +1,27 @@
+#/bin/zsh
+
+# blog is a little command to edit a blog post for my jekyll static site
+
+if [ -z "$1" ]; then
+  echo "Hey don't forget to supply a slug for your post, pretty please?"
+  exit 1
+fi
+
+slug="$1"
+blog_dir="$HOME/Projects/inkdroid.org"
+date=`date +%Y-%m-%d`
+
+filename="${blog_dir}/_posts/${date}-${slug}.md"
+
+if [ ! -f "$filename" ]; then
+  cat <<EOF  > $filename
+---
+layout: post
+title: ${slug}
+tags:
+- 
+---
+EOF
+fi
+
+nvim "+norm Go" "+startinsert" "$filename"
